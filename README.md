@@ -2,13 +2,13 @@
 
 > Administer your servers with ease
 
-# Installation
+## Installation
 
 Currently, there is no straightforward method to install this software.
 
-# Contributing
+## Contributing
 
-## Expanding the ESLint configuration
+### Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 

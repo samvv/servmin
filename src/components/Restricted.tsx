@@ -11,7 +11,9 @@ export function Restricted({ children, permissions = [] }: RestrictedProps): Rea
   if (user === null) {
     return <LogIn />;
   }
-  return children;
+  return (
+    <>{children}</>
+  );
 }
 
 export default Restricted;

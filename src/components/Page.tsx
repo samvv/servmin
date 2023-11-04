@@ -1,5 +1,5 @@
 import { Link, LinkProps, matchPath, useLocation, useMatch } from "react-router-dom";
-import { useAuth } from "../api";
+import { useAuth } from "../client";
 import { useState } from "react";
 
 function merge(...classNames: (string | undefined)[]): string {
@@ -33,7 +33,7 @@ export interface PageProps {
 
 export function Page({ children }: PageProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const person = useAuth();
+  const user = useAuth();
   let menu;
   if (menuOpen) {
     menu = (
@@ -44,10 +44,10 @@ export function Page({ children }: PageProps) {
     );
   }
   let links;
-  if (person !== null) {
+  if (user !== null) {
     links = (
       <div className="relative" onMouseOver={() => setMenuOpen(true)} onMouseOut={() => setMenuOpen(false)}>
-        <NavBarLink to="/profile">{person.fullName}</NavBarLink>
+        <NavBarLink to="/profile">{user.fullName}</NavBarLink>
         {menu}
       </div>
     );
@@ -69,7 +69,7 @@ export function Page({ children }: PageProps) {
         <div className="min-h-screen bg-gray-200 min-w-[10rem]">
           <SidebarLink to="/servers" match={['/servers', '/server/*']}>Servers</SidebarLink>
         </div>
-        <main className="p-5">{children}</main>
+        <main className="p-5 flex-auto">{children}</main>
       </div>
     </>
   );

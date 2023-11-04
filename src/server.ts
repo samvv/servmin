@@ -3,6 +3,7 @@ import { BehaviorSubject } from "rxjs";
 import { PersonBase, Fallible, Status, MessageType, ValueType, warn } from "./common";
 import path from "node:path"
 import { Server as BunServer } from "bun"
+import { write } from "node:console";
 
 interface Person extends PersonBase {
   createdAt: Date;
@@ -88,7 +89,6 @@ export class ClientHandler implements AsyncMethods {
   }
 
   async listServers() {
-    console.log(this.session);
     const initValue = servers.filter(server => server.isPublic || (this.session.user !== null && server.ownerId === this.session.user.id));
     return new BehaviorSubject(initValue);
   }
@@ -117,13 +117,17 @@ export class HTTPServer {
 
   private server: BunServer;
 
-  private nextSubscriptionId = 0;
+  private nextSubjectId = 0;
+  private activeSubjects = Object.create(null);
 
+  private nextSubscriptionId = 0;
   private activeSubscriptions = Object.create(null);
 
   public constructor() {
     const self = this;
     this.server = Bun.serve<WSSession>({
+      // cert: Bun.file('./config/localhost.crt'),
+      // key: Bun.file('./config/localhost.key'),
       async fetch(req, server) {
 
         // Attempt to upgrade the request to the WebSocket protocol
@@ -137,8 +141,52 @@ export class HTTPServer {
           return undefined;
         }
 
-        // handle HTTP request normally
         const url = new URL(req.url);
+
+        switch (url.pathname) {
+          case '/fallback/call':
+          {
+            const { methodName, args } = await req.json();
+            const handler = new ClientHandler({ user: null });
+            const method = (handler as any)[methodName];
+            if (method === undefined) {
+              return new Response(JSON.stringify({ type: 'error', message: `Method '${methodName}' was not found.` }), { status: 500, headers: [ [ 'Access-Control-Allow-Origin', '*'] ] });
+            }
+            let value;
+            try {
+              value = await method.call(handler, ...args);
+            } catch (error) {
+              let message;
+              if (error instanceof APIError) {
+                message = error.message;
+              } else {
+                message = E_INTERNAL_SERVER_ERROR;
+                console.error(error);
+              }
+              return new Response(JSON.stringify({ type: 'error', message }), { status: 500, headers: [ [ 'Access-Control-Allow-Origin', '*'] ] });
+            }
+            if (value instanceof BehaviorSubject) {
+              const id = self.nextSubjectId++;
+              self.activeSubjects[id] = value;
+              value = { $type: ValueType.Subject, poll: 3, id, initValue: value.value };
+            } else {
+              value = { $type: ValueType.Plain, value };
+            }
+            return new Response(JSON.stringify({ type: 'success', value }), { headers: [ [ 'Access-Control-Allow-Origin', '*'] ] });
+          }
+          case '/fallback/poll':
+          {
+            const { id } = await req.json();
+            const subject = self.activeSubjects[id];
+            if (subject === undefined) {
+              return new Response(JSON.stringify({ type: 'error', message: `Event stream with the given ID not found.` }), { headers: [ [ 'Access-Control-Allow-Origin', '*'] ] });
+            }
+            return new Response(JSON.stringify({ type: 'success', value: subject.value }), { headers: [ [ 'Access-Control-Allow-Origin', '*'] ] });
+          }
+        }
+
+        // FIXME Disable proxying for now because we don't proxy WebSocket
+        return;
 
         // Redirect to the devlopment server if one is active
         if (isDebug) {

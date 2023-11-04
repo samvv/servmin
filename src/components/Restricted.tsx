@@ -1,4 +1,4 @@
-import { useAuth } from "../api";
+import { useAuth } from "../client";
 import LogIn from "./LogIn";
 
 export interface RestrictedProps {

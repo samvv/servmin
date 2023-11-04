@@ -1,4 +1,8 @@
 
+export function info(message: string): void {
+  console.info(message);
+}
+
 export function warn(message: string): void {
   console.warn(message);
 }

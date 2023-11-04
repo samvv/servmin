@@ -3,7 +3,7 @@ import { Button, Label, TextInput } from "flowbite-react";
 
 import { Heading } from "./Heading";
 import { Diagnostic } from "../common";
-import { authAtom, login } from "../api";
+import { authAtom, login } from "../client";
 import { useSetAtom } from "jotai";
 import { useLocation, useNavigate } from "react-router-dom";
 

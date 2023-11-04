@@ -4,7 +4,7 @@ import Home from './components/Home'
 import Servers from './components/Servers'
 import NotFound from './components/NotFound'
 import { useEffect } from 'react'
-import { authAtom, logout } from './api'
+import { authAtom, logout } from './client'
 import { useSetAtom } from 'jotai'
 import LogIn from './components/LogIn'
 
@@ -24,10 +24,16 @@ function LogOut() {
   const navigate = useNavigate();
   const setAuth = useSetAtom(authAtom);
   useEffect(() => {
-    logout().then(() => {
-      setAuth(null);
-      navigate('/');
-    });
+    logout()
+      .then(() => {
+        setAuth(null);
+        navigate('/');
+      })
+      .catch(() => {
+        // TODO Add message
+        setAuth(null);
+        navigate('/');
+      });
   });
   return (
     <p>Logging out ...</p>

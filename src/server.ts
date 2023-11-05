@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from "uuid"
 import { BehaviorSubject } from "rxjs";
-import { PersonBase, Fallible, Status, MessageType, ValueType, warn } from "./common";
+import { PersonBase, Fallible, Status, MessageType, ValueType } from "./common";
+import { warn } from "./logger"
 import path from "node:path"
 import { Server as BunServer } from "bun"
-import { write } from "node:console";
 
 interface Person extends PersonBase {
   createdAt: Date;

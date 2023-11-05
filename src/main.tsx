@@ -5,13 +5,23 @@ import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'jotai'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider>
-        <App />
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
-)
+const isDebug = import.meta.env.DEV;
+
+let element = (
+  <BrowserRouter>
+    <Provider>
+      <App />
+    </Provider>
+  </BrowserRouter>
+);
+
+if (isDebug) {
+  element = (
+    <React.StrictMode>
+      {element}
+    </React.StrictMode>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(element);
 

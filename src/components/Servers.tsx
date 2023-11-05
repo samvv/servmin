@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useServers } from "../client";
+import { useServers } from "../api";
 import Page from "./Page";
 import Restricted from "./Restricted";
 import { Button } from "flowbite-react";

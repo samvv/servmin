@@ -1,5 +1,5 @@
 import { Link, LinkProps, matchPath, useLocation, useMatch } from "react-router-dom";
-import { useAuth } from "../client";
+import { useAuth } from "../api";
 import { useState } from "react";
 
 function merge(...classNames: (string | undefined)[]): string {

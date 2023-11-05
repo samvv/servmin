@@ -3,7 +3,7 @@ import { Button, Label, TextInput } from "flowbite-react";
 
 import { Heading } from "./Heading";
 import { Diagnostic } from "../common";
-import { authAtom, login } from "../client";
+import { authAtom, login, useShowMessage } from "../api";
 import { useSetAtom } from "jotai";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -33,23 +33,32 @@ export function LogIn() {
   const setAuth = useSetAtom(authAtom);
   const location = useLocation();
   const navigate = useNavigate();
+  const showMessage = useShowMessage();
   const [errors, setErrors] = useState<string[]>([]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const resetErrors = () => {
+  const [disabled, setDisabled] = useState(false);
+  const reset = () => {
     setErrors([]);
+    setDisabled(false);
   }
   const submit = async () => {
+    setDisabled(true);
     const result = await login(email, password);
     if (result.success) {
       setAuth(result.value);
-      resetErrors();
+      showMessage({
+        text: `You are now logged in as ${result.value.fullName}`,
+        type: 'info',
+      });
+      reset();
       if (location.pathname === '/login') {
         navigate('/');
       }
     } else {
       const [genericErrors, _fieldErrors] = processErrors(result.value);
       setErrors(genericErrors);
+      setDisabled(false);
     }
   }
   return (
@@ -66,7 +75,7 @@ export function LogIn() {
             <Label htmlFor="email">Password</Label>
           </div>
           <TextInput required id="password" type="password" placeholder="Your password here ..." onInput={e => setPassword(e.currentTarget.value)}/>
-          <Button type="submit">Log In</Button>
+          <Button disabled={disabled} type="submit">Log In</Button>
          </form>
       </div>
     </div>

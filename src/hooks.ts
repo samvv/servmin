@@ -23,4 +23,3 @@ export function useSubjectState<T>(subject: BehaviorSubject<T>): [T, (value: T) 
     subject.next.bind(subject),
   ]
 }
-

@@ -168,7 +168,7 @@ export class HTTPServer {
             if (value instanceof BehaviorSubject) {
               const id = self.nextSubjectId++;
               self.activeSubjects[id] = value;
-              value = { $type: ValueType.Subject, poll: 3, id, initValue: value.value };
+              value = { $type: ValueType.Subject, poll: 3000, id, initValue: value.value };
             } else {
               value = { $type: ValueType.Plain, value };
             }

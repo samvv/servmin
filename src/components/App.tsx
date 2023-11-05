@@ -1,12 +1,12 @@
 import { Route, Routes, useNavigate } from 'react-router-dom'
 
-import Home from './components/Home'
-import Servers from './components/Servers'
-import NotFound from './components/NotFound'
-import { useEffect, useMemo } from 'react'
-import { authAtom, logout, useShowMessage, useMessages, useHideMessage } from './api'
+import Home from './Home'
+import Servers from './Servers'
+import NotFound from './NotFound'
+import { useEffect } from 'react'
+import { authAtom, logout, useShowMessage, useMessages, useHideMessage } from '../api'
 import { useSetAtom } from 'jotai'
-import LogIn from './components/LogIn'
+import LogIn from './LogIn'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 

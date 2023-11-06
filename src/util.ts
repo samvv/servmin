@@ -36,3 +36,15 @@ export class SubjectResource<T> {
 
 }
 
+export function isChildOf(child: Node, parent: Node): boolean {
+  for (;;) {
+    if (child === parent) {
+      return true;
+    }
+    if (child.parentNode === null) {
+      return false;
+    }
+    child = child.parentNode;
+  }
+}
+
